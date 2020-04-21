@@ -1,0 +1,234 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="ck9_gazebo">
+
+  <xacro:include filename="$(find ck9_gazebo)/urdf/ck9_gazebo.plugins.xacro" />
+
+  <xacro:property name="base_radius" value="0.15"/>
+  <xacro:property name="base_len" value="0.056"/>
+  <xacro:property name="wheel_radius" value="0.035"/>
+  <xacro:property name="base_wheel_gap" value="0.007"/>
+  <xacro:property name="wheel_separation" value="0.32"/>
+  <xacro:property name="wheel_joint_offset" value="0.02"/>
+
+  <xacro:property name="caster_wheel_radius" value="0.015"/>
+  <xacro:property name="caster_wheel_mass" value="10"/>
+  <xacro:property name="caster_wheel_joint_offset" value="0.14"/>
+
+  <xacro:property name="laser_size_x" value="0.03"/>
+  <xacro:property name="laser_size_y" value="0.03"/>
+  <xacro:property name="laser_size_z" value="0.04"/>
+  <xacro:property name="laser_origin_x" value="0.065"/>
+  <xacro:property name="laser_origin_y" value="0"/>
+  <xacro:property name="laser_origin_z" value="0.07"/>
+
+ <material name="blue">
+    <color rgba="0 0 0.8 1"/>
+  </material>
+  <material name="black">
+    <color rgba="0 0 0 1"/>
+  </material>
+  <material name="white">
+    <color rgba="1 1 1 1"/>
+  </material>
+  <material name="red">
+    <color rgba="0.8 0.0 0.0 1.0"/>
+  </material>
+
+  
+  <xacro:macro name="box_inertia" params="m w h d">
+    <inertial>
+      <mass value="${m}"/>
+      <inertia ixx="${m / 12.0 * (d*d + h*h)}" ixy="0.0" ixz="0.0" iyy="${m / 12.0 * (w*w + h*h)}" iyz="0.0" izz="${m / 12.0 * (w*w + d*d)}"/>
+    </inertial>
+  </xacro:macro>
+
+  <link name="base_footprint">
+   <!-- <xacro:box_inertia m="20" w="0.001" h="0.001" d="0.001"/> -->
+ <inertial>
+ <mass value="0.835" />
+ <inertia ixx="0.008" ixy="0.011" ixz="0.004" iyx="0.011" iyy="0.004" iyz="0.008" izx="0.004" izy="0.008" izz="0.011" />
+ </inertial>
+    <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+            <box size="0.001 0.001 0.001" />
+        </geometry>
+    <material name="black"/>
+    </visual>
+  </link>
+
+  <link name="base_link">
+    <xacro:box_inertia m="10" w="${base_len}" h="${base_radius}" d="0.01"/>
+    <visual>
+      <origin xyz="0.015 0.008 0.038" rpy="-1.571 0 -1.571" />
+      <geometry>
+        <mesh
+          filename="package://ck9_gazebo/meshes/ck9.stl" />>
+        
+      </geometry>
+    <material name="white"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0.034" rpy="0 0 0" />
+      <geometry>
+        <cylinder radius="${base_radius}" length="${base_len}"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="base_link_joint" type="fixed">
+    <origin xyz="0 0 ${wheel_radius + 0.005}" rpy="0 0 0" />
+    <parent link="base_footprint"/>
+    <child link="base_link" />
+  </joint>
+  <xacro:macro name="cylinder_inertia" params="m r h">
+    <inertial>
+      <mass value="${m}"/>
+      <inertia ixx="${m*(3*r*r+h*h)/12}" ixy = "0" ixz = "0" iyy="${m*(3*r*r+h*h)/12}" iyz = "0" izz="${m*r*r/2}"/> 
+    </inertial>
+  </xacro:macro>
+
+  <xacro:macro name="wheel" params="prefix reflect">
+    <link name="${prefix}_wheel">
+      <visual>
+        <!---<origin xyz="-0.020 -0.009 0" rpy="1.571 0 0"/>-->
+        <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
+        <geometry>
+         <mesh scale="0.001 0.001 0.001"
+          filename="package://ck9_gazebo/meshes/wheel.stl" />
+          <!--<cylinder radius="${wheel_radius}" length="0.005"/>-->
+        </geometry>
+      <material name="black"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
+        <geometry>
+          <cylinder radius="${wheel_radius}" length="0.005"/>
+        
+        </geometry>
+        
+      </collision>
+      <xacro:cylinder_inertia m="10" r="${wheel_radius}" h="0.005"/>
+     
+    </link>
+
+    <joint name="${prefix}_wheel_joint" type="continuous">
+      <axis xyz="0 1 0" rpy="0 0 0" />
+      <parent link="base_link"/>
+      <child link="${prefix}_wheel"/>
+      <origin xyz="${wheel_joint_offset} ${((base_radius)+base_wheel_gap)*reflect} -0.005" rpy="0 0 0"/>
+    <!-- <limit effort="10000" velocity="1000"/>
+    <joint_properties damping="1.0" friction="1.0" />-->
+    
+    </joint>
+  </xacro:macro>
+
+  <xacro:wheel prefix="left" reflect="1"/>
+  <xacro:wheel prefix="right" reflect="-1"/>
+  <xacro:macro name="sphere_inertia" params="m r">
+    <inertial>
+      <mass value="${m}"/>
+      <inertia ixx="${2.0*m*(r*r)/5.0}" ixy="0.0" ixz="0.0" iyy="${2.0*m*(r*r)/5.0}" iyz="0.0" izz="${2.0*m*(r*r)/5.0}"/>
+    </inertial>
+  </xacro:macro>
+
+   <link name="caster_wheel_front">
+    <!--<visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <sphere radius="${caster_wheel_radius}"/>
+      </geometry>
+    <material name="blue"/>
+    </visual>-->
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <sphere radius="${caster_wheel_radius}"/>
+      </geometry>
+      <surface>
+        <friction>
+          <ode>
+            <mu>0</mu>
+            <mu2>0</mu2>
+            <slip1>1.0</slip1>
+            <slip2>1.0</slip2>
+          </ode>
+        </friction>
+      </surface>
+    </collision>
+    <xacro:sphere_inertia m="0.1" r="${caster_wheel_radius}"/>
+  </link>
+
+  <joint name="caster_wheel_joint_front" type="continuous">
+    <axis xyz="0 1 0" rpy="0 0 0" />
+    <parent link="base_link"/>
+    <child link="caster_wheel_front"/>
+    <origin xyz="${caster_wheel_joint_offset} 0 -${caster_wheel_radius+0.01}" rpy="0 0 0"/>
+  </joint>
+
+
+   <link name="caster_wheel_back">
+    <!--<visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <sphere radius="${caster_wheel_radius}"/>
+      </geometry>
+    <material name="blue"/>
+    </visual>-->
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <sphere radius="${caster_wheel_radius}"/>
+      </geometry>
+      <surface>
+        <friction>
+          <ode>
+            <mu>0</mu>
+            <mu2>0</mu2>
+            <slip1>1.0</slip1>
+            <slip2>1.0</slip2>
+          </ode>
+        </friction>
+      </surface>
+    </collision>
+    <xacro:sphere_inertia m="5" r="${caster_wheel_radius}"/>
+  </link>
+
+  <joint name="caster_wheel_joint_back" type="continuous">
+    <axis xyz="0 1 0" rpy="0 0 0" />
+    <parent link="base_link"/>
+    <child link="caster_wheel_back"/>
+    <origin xyz="-${caster_wheel_joint_offset} 0 -${caster_wheel_radius+0.01}" rpy="0 0 0"/>
+  </joint>
+
+  <!--Laser Scan-->
+  <link name="sensor_laser">
+    <visual>
+      <origin xyz="0.023 -0.004 -0.151" rpy="0 1.571 0" />
+      <geometry>
+        <mesh filename="package://ck9_gazebo/meshes/lidar.stl"/>
+        <!--box size="${laser_size_x} ${laser_size_y} ${laser_size_z}"/-->
+      </geometry>
+      <material name="black"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="${laser_size_x} ${laser_size_y} ${laser_size_z}"/>
+      </geometry>
+    </collision>
+   <inertial>
+      <mass value="0.3"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+  </link> 
+
+  <joint name="sensor_laser_joint" type="fixed">
+    <origin xyz="${laser_origin_x} ${laser_origin_y} ${laser_origin_z}" rpy="0 0 0" />
+    <parent link="base_link"/>
+    <child link="sensor_laser" />
+  </joint>
+
+  <xacro:include filename="$(find ck9_gazebo)/urdf/ck9_gazebo.diff.plugins.xacro"/> 
+
+
+</robot>
