@@ -69,7 +69,7 @@
     <material name="white"/>
     </visual>
     <collision>
-      <origin xyz="0 0 0.034" rpy="0 0 0" />
+      <origin xyz="0.015 0.009 0.034" rpy="0 0 0" />
       <geometry>
         <cylinder radius="${base_radius}" length="${base_len}"/>
       </geometry>
