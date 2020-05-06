@@ -3,7 +3,7 @@ CK-9's Gazebo simulation package.
 
 ## Pre-requisites:
 1. Ubuntu 16.04
-2. ROS Kinetic Kame (For installation steps: http://wiki.ros.org/kinetic/Installation/Ubuntu)
+2. ROS Kinetic Kame **Full Installation** (For installation steps: http://wiki.ros.org/kinetic/Installation/Ubuntu)
 
 ## This repo contains:
 1. CK-9 URDF model for simulation (differential drive robot with two motors and LiDaR)
@@ -25,3 +25,6 @@ CK-9's Gazebo simulation package.
 and then move around your CK-9 with teleop.
 - Save the map using the command ```rosrun map_server map_saver -f map_name```
 - To run autonomous navigation, first launch ```roslaunch ck9_gazebo ck9_gazebo.launch``` and then ```roslaunch ck9_navigation ck9_navigation.launch map_file:=/home/username/path_to_map.yaml``` (The default map is the willowgarage_gmapping.yaml provided in this repo's map folder)
+
+## Issues
+If you face any problems working with ck9_gazebo, check the issues section of this repo. You might find useful help in some of the closed issues, which can save you time.
