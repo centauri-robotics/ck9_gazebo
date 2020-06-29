@@ -1,6 +1,10 @@
 # ck9_gazebo
 CK-9's Gazebo simulation package.
 
+To buy CK-9, click here: https://centaurirobotics.in/dev/buy.html
+
+Code for real CK-9: https://github.com/centauri-robotics/ck9
+
 ## Pre-requisites:
 1. Ubuntu 16.04
 2. ROS Kinetic Kame **Full Installation** (For installation steps: http://wiki.ros.org/kinetic/Installation/Ubuntu)
