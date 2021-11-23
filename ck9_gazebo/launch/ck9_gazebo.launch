@@ -17,7 +17,7 @@
   <!--Nodes-->
   <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher"/>
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
-  <node name="spawn_model" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model ck9_gazebo -verbose" output="screen"/>
+  <node name="spawn_model" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model ck9_gazebo" respawn="false" output="screen"/>
   <node name="rviz" pkg="rviz" type="rviz" args="-d $(find ck9_gazebo)/rviz/ck9_gazebo.rviz" required="true"/>
 
 </launch>

@@ -1,0 +1,23 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "",
+        "limitSymbolsToIncludedHeaders": true
+      },
+      "includePath": [
+        "/home/adi/catkin_ws/devel/include/**",
+        "/opt/ros/melodic/include/**",
+        "/home/adi/catkin_ws/src/beginner_tutorials/include/**",
+        "/home/adi/catkin_ws/src/rosserial/rosserial_server/include/**",
+        "/home/adi/catkin_ws/src/rosserial/rosserial_test/include/**",
+        "/home/adi/catkin_ws/src/6-DOF_Manipulator/six_dof_spatial_manipulator/include/**",
+        "/home/adi/catkin_ws/src/3-DOF_Manipulator/three_dof_planar_manipulator/include/**",
+        "/home/adi/catkin_ws/src/3-DOF_Manipulator/three_dof_planar_manipulator_ikfast_arm_plugin/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS"
+    }
+  ],
+  "version": 4
+}
